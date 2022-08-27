@@ -6,6 +6,7 @@ import {ArchiveAPI} from "./api/archive.js"
 import {NftAPI} from "./api/nft.js";
 import {TransactionsAPI} from "./api/transactions.js";
 import {CoinsAPI} from "./api/coins.js";
+import {ValidatorsAPI} from "./api/validators.js";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -37,7 +38,8 @@ Object.assign(Archive.prototype,
     ArchiveAPI,
     NftAPI,
     CoinsAPI,
-    TransactionsAPI
+    TransactionsAPI,
+    ValidatorsAPI
 )
 
 export default Archive

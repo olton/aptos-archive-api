@@ -1,3 +1,4 @@
+import fs from "fs";
 import path from "path"
 import {fileURLToPath} from "url"
 import {Postgres} from "./helpers/postgres.js"
@@ -13,7 +14,10 @@ import {OperationsAPI} from "./api/operations.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const connectData = readJson(path.resolve(__dirname, 'config.json'))
+let connectData
+if (fs.existsSync(path.resolve(__dirname, 'config.json'))) {
+  connectData  = readJson(path.resolve(__dirname, 'config.json'))
+}
 
 const defaultApiOptions = {
     debug: false,
@@ -24,9 +28,15 @@ const defaultApiOptions = {
 }
 
 class Archive {
-    constructor(options) {
-        this.connect = {
-            ...connectData
+    constructor(connect, options) {
+        if (connect) {
+            this.connect = {
+                ...connect
+            }
+        } else {
+            this.connect = {
+                ...connectData
+            }
         }
         this.options = Object.assign({}, defaultApiOptions, options)
         this.pool = null

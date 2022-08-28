@@ -8,9 +8,10 @@ npm install @olton/aptos-archive-api --save
 ## Api Config
 Api configuration file `connect.conf` placed in src folder. 
 
-## Init
+## Init & Using
 ```javascript
 const arch = new Archive()
+const collectionCount = await arch.collectionsCount()
 ```
 
 ## Functions

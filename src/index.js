@@ -4,7 +4,7 @@ import {Postgres} from "./helpers/postgres.js"
 import {readJson} from "./helpers/readers.js"
 import {ArchiveAPI} from "./api/archive.js"
 import {NftAPI} from "./api/nft.js";
-import {TransactionsAPI} from "./api/transactions.js";
+import {TransactionsAPI, TRANSACTION_TYPE_STATE, TRANSACTION_TYPE_META, TRANSACTION_TYPE_USER} from "./api/transactions.js";
 import {CoinsAPI} from "./api/coins.js";
 import {ValidatorsAPI} from "./api/validators.js";
 import {GasAPI} from "./api/gas.js";
@@ -45,5 +45,9 @@ Object.assign(Archive.prototype,
     GasAPI,
     OperationsAPI
 )
+
+export {
+    TRANSACTION_TYPE_STATE, TRANSACTION_TYPE_META, TRANSACTION_TYPE_USER
+}
 
 export default Archive

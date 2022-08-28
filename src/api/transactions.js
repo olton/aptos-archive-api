@@ -1,5 +1,9 @@
 import {Result} from "../helpers/result.js";
 
+export const TRANSACTION_TYPE_USER = 'user'
+export const TRANSACTION_TYPE_META = 'meta'
+export const TRANSACTION_TYPE_STATE = 'state'
+
 export const TransactionsAPI = {
     async transactions({order = "timestamp", limit = 25, start = 0}){
         const sql = `
@@ -149,5 +153,105 @@ export const TransactionsAPI = {
         } catch (e) {
             return new Result(false, e.message)
         }
-    }
+    },
+
+    async transactionsPerSecond(limit = 3600){
+        const sql = `
+            with trans as (
+                select
+                    t.version,
+                    t.timestamp at time zone 'utc' as timestamp
+                from transactions t
+                order by version desc limit 100000
+            )
+            select
+                date_trunc('second', tr.timestamp) as minute,
+                count(tr.version)
+            from trans tr
+            group by 1
+            order by 1 desc
+            limit $1
+        `
+        try {
+            const result = (await this.query(sql, [limit])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
+    async transactionsPerSecondByType(type = TRANSACTION_TYPE_USER, limit = 3600){
+        const sql = `
+            with trans as (
+                select
+                    t.version,
+                    t.timestamp at time zone 'utc' as timestamp
+                from transactions t
+                where t.type = $1
+                order by version desc limit 100000
+            )
+            select
+                date_trunc('second', tr.timestamp) as minute,
+                count(tr.version)
+            from trans tr
+            group by 1
+            order by 1 desc
+            limit $2
+        `
+        try {
+            const result = (await this.query(sql, [type, limit])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
+    async transactionsPerMinute(limit = 60){
+        const sql = `
+            with trans as (
+                select
+                    t.version,
+                    t.timestamp at time zone 'utc' as timestamp
+                from transactions t
+                order by version desc limit 100000
+            )
+            select
+                date_trunc('minute', tr.timestamp) as minute,
+                count(tr.version)
+            from trans tr
+            group by 1
+            order by 1 desc
+            limit $1
+        `
+        try {
+            const result = (await this.query(sql, [limit])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
+    async transactionsPerMinuteByType(type = TRANSACTION_TYPE_USER, limit = 60){
+        const sql = `
+            with trans as (select
+                        t.version,
+                        t.timestamp at time zone 'utc' as timestamp
+                    from transactions t
+                    where t.type = $1
+                    order by t.version desc limit 100000)
+            select
+                date_trunc('minute', tr.timestamp) as minute,
+                count(tr.version)
+            from trans tr
+            group by 1
+            order by 1 desc
+            limit $2
+        `
+        try {
+            const result = (await this.query(sql, [type, limit])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
 }

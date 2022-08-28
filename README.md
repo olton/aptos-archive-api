@@ -2,7 +2,7 @@
 
 ## Install
 ```shell
-npm install @olton/archive-api --save
+npm install @olton/aptos-archive-api --save
 ```
 
 ## Api Config

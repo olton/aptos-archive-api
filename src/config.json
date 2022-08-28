@@ -7,6 +7,6 @@
     "database": "aptos_archive",
     "options": {
         "allowExitOnIdle": true,
-        "max": 30
+        "max": 3000
     }
 }

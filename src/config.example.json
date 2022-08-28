@@ -1,0 +1,12 @@
+{
+    "proto": "http",
+    "host": "archive.aptosnet.com",
+    "port": 5432,
+    "user": "user",
+    "password": "password",
+    "database": "aptos_archive",
+    "options": {
+        "allowExitOnIdle": true,
+        "max": 300
+    }
+}

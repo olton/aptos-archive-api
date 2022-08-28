@@ -13,7 +13,7 @@ import {OperationsAPI} from "./api/operations.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const connectData = readJson(path.resolve(__dirname, 'connect.json'))
+const connectData = readJson(path.resolve(__dirname, 'config.json'))
 
 const defaultApiOptions = {
     debug: false,

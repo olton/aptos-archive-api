@@ -3,8 +3,14 @@ import {Result} from "../helpers/result.js";
 export const TransactionsAPI = {
     async transactions({order = "timestamp", limit = 25, start = 0}){
         const sql = `
-            select *
-            from v_transactions
+            select vt.*,
+                coalesce(ut.sender, mt.proposer, null) as sender,
+                coalesce(ut.sequence_number, 0) as sequence_number,
+                coalesce(ut.max_gas_amount, 0) as max_gas_amount,
+                coalesce(ut.max_gas_amount, 0) as max_gas_amount
+            from v_transactions vt
+                left join user_transactions ut on vt.id = ut.id
+                left join meta_transactions mt on mt.id = ut.id
             where version >= $2
             order by '%ORDER%'
             limit $1 
@@ -20,7 +26,11 @@ export const TransactionsAPI = {
 
     async userTransactions ({order = "timestamp", limit = 25, start = 0}) {
         const sql = `
-            select *
+            select vt.*,
+                   ut.sender,
+                   ut.sequence_number,
+                   ut.max_gas_amount,
+                   ut.gas_unit_price
             from v_transactions vt
               left join user_transactions ut on vt.id = ut.id 
             where type::text = 'user'
@@ -39,7 +49,12 @@ export const TransactionsAPI = {
 
     async metaTransactions ({order = "timestamp", limit = 25, start = 0}) {
         const sql = `
-            select *
+            select vt.*,
+                   mt.proposer as sender,
+                   mt.epoch,
+                   mt.round,
+                   mt.previous_block_votes,
+                   mt.failed_proposer_indices
             from v_transactions vt
               left join meta_transactions mt on vt.id = mt.id 
             where type::text = 'meta'

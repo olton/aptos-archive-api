@@ -66,7 +66,7 @@ export const NftAPI = {
             t.timestamp 
         from collections c
             left join transactions t on t.id = c.fk_id
-        where version >= $3 and name like '%' || $1 || '%'
+        where version >= $3 and (name like '%' || $1 || '%' or name like '%' || ${encodeStr(name)} || '%')
         order by '%ORDER%'
         limit $2
     `.replace("'%ORDER%'", order)

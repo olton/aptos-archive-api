@@ -18,6 +18,11 @@ const collectionCount = await arch.collectionsCount()
 ### Archive API
 - [x] state() - return archive state (current store version and timestamp)
 - [x] ledger() - return current ledger state
+```javascript
+const state = await arch.state()
+const ledger = await arch.ledger()
+```
+
 
 ### Coins API
 - [x] transferCoinCount()
@@ -27,6 +32,16 @@ const collectionCount = await arch.collectionsCount()
 - [x] payments({limit, start})
 - [x] mintAddress(address, {limit, start})
 - [x] mint({order, limit, start})
+```javascript
+const tran_count = await arch.transferCoinCount()
+const mint_count = await arch.mintCoinCount()
+const incoming = await arch.incomingPayments("0x123...", {limit: 25, start: 0})
+const outgoing = await arch.outgoingPayments("0x123...", {limit: 25, start: 0})
+const payments = await arch.payments({limit: 25, start: 0})
+const mintAddr = await arch.mintAddress("0x123...", {limit: 25, start: 0})
+const mint = await arch.mint({order: "version desc", limit: 25, start: 0})
+```
+
 
 ### Nft API
 - [x] collectionsCount()

@@ -90,6 +90,39 @@ export const TransactionsAPI = {
         }
     },
 
+    async transactionsFromAddress (address, {order = "version", limit = 25, offset = 0}={}) {
+        const fields = `
+        `
+        const sql = `
+            with transactions as (
+            select t.*,
+                   ut.sender
+            from transactions t
+            left join user_transactions ut on t.id = ut.id
+            left join payloads p on t.id = p.id
+            where ut.sender = $1
+            
+            union all
+            
+            select t.*,
+                   mt.proposer as sebder                   
+            from transactions t
+            left join meta_transactions mt on t.id = mt.id
+            where mt.proposer = $1
+            )
+            select * from transactions
+            order by '%ORDER%'
+            limit $2 offset $3        
+        `.replace("'%ORDER%'", order)
+
+        try {
+            const result = (await this.query(sql, [address, limit, offset])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message, e.stack)
+        }
+    },
+
     async genesis(){
         const sql = `
             select *

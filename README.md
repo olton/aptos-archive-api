@@ -23,7 +23,6 @@ const state = await arch.state()
 const ledger = await arch.ledger()
 ```
 
-
 ### Coins API
 - [x] transferCoinCount()
 - [x] mintCoinCount()

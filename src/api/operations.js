@@ -3,10 +3,10 @@ import {Result} from "../helpers/result.js";
 export const OperationsAPI = {
     async operationsCount () {
         const sql = `
-            select function, count(*)
+            select split_part(function::text, '::', 2) || '::' || split_part(function::text, '::', 3) as function, count(*)
             from payloads
-            group by function
-            order by function
+            group by 1
+            order by 1
         `
         try {
             let result = (await this.query(sql)).rows

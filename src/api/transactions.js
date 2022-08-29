@@ -15,7 +15,7 @@ export const TransactionsAPI = {
             from v_transactions vt
                 left join user_transactions ut on vt.id = ut.id
                 left join meta_transactions mt on mt.id = ut.id
-            where version >= $2
+            where vt.version >= $2
             order by '%ORDER%'
             limit $1 
         `.replace("'%ORDER%'", order)

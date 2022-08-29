@@ -35,7 +35,7 @@ export const CoinsAPI = {
         }
     },
 
-    async incomingPayments (address, {limit= 25, start = 0} = {}) {
+    async incomingPayments (address, {order = 'version', limit= 25, start = 0} = {}) {
         const sql = `
             select 
                 vtc.*,
@@ -45,7 +45,7 @@ export const CoinsAPI = {
                 left join transactions t on vtc.id = t.id
             where version >= $3 and receiver = $1            
             limit $2
-        `
+        `.replace("'%ORDER%'", order)
 
         try {
             const result = (await this.query(sql, [address, limit, start])).rows
@@ -55,7 +55,7 @@ export const CoinsAPI = {
         }
     },
 
-    async outgoingPayments (address, {limit= 25, start = 0} = {}) {
+    async outgoingPayments (address, {order = 'version', limit= 25, start = 0} = {}) {
         const sql = `
             select
                 vtc.*,
@@ -65,7 +65,7 @@ export const CoinsAPI = {
                 left join transactions t on vtc.id = t.id
             where version >= $3 and sender = $1
             limit $2
-        `
+        `.replace("'%ORDER%'", order)
 
         try {
             const result = (await this.query(sql, [address, limit, start])).rows
@@ -75,7 +75,7 @@ export const CoinsAPI = {
         }
     },
 
-    async payments ({limit= 25, start = 0} = {}) {
+    async payments ({order = 'version', limit= 25, start = 0} = {}) {
         const sql = `
             select
                 vtc.*,
@@ -85,7 +85,7 @@ export const CoinsAPI = {
                 left join transactions t on vtc.id = t.id
             where version >= $3
             limit $2
-        `
+        `.replace("'%ORDER%'", order)
 
         try {
             const result = (await this.query(sql, [limit, start])).rows
@@ -95,7 +95,7 @@ export const CoinsAPI = {
         }
     },
 
-    async mintAddress (address, {limit= 25, start = 0} = {}) {
+    async mintAddress (address, {order = 'version', limit= 25, start = 0} = {}) {
         const sql = `
             select
                 v.*,
@@ -104,8 +104,9 @@ export const CoinsAPI = {
             from v_mint_coin v
                 left join transactions t on v.id = t.id
             where version >= $3 and receiver = $1
+            order by '%ORDER%'
             limit $2
-        `
+        `.replace("'%ORDER%'", order)
 
         try {
             const result = (await this.query(sql, [address, limit, start])).rows

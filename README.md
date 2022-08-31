@@ -59,14 +59,18 @@ const mint = await arch.mint({order: "version desc", limit: 25, start: 0})
 - [x] metaTransactions({order, limit, start})
 - [x] stateTransactions({order, limit, start})
 - [x] transactionsFromAddress(address, {order, limit, start})
+- [x] proposalTransactions(address, {order, limit, start})
 - [x] genesis()
 - [x] transactionsCount()
 ```javascript
-
+const trans = await transactions({order:"version", limit:25, start:0})
+const genesis = await arch.genesis()
+const counts = await arch.transactionsCount()
 ```
 ### Validators API
 - [x] currentRound()
 - [x] roundsPerEpoch(epoch_count)
+- [x] roundsPerEpochByAddress(address, epoch_count)
 - [x] roundsInTime(trunc, limit)
 ```javascript
 const currentRound = await arch.currentRoun()

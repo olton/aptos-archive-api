@@ -10,7 +10,19 @@ Api configuration file `connect.conf` placed in src folder.
 
 ## Init & Using
 ```javascript
-const arch = new Archive()
+const arch = new Archive() // when config.json exist or
+const arch = new Archive({
+    "proto": "http",
+    "host": "archive.aptosnet.com",
+    "port": 5432,
+    "user": "user",
+    "password": "password",
+    "database": "aptos_archive",
+    "options": {
+        "allowExitOnIdle": true,
+        "max": 3000
+    }
+})
 const collectionCount = await arch.collectionsCount()
 ```
 

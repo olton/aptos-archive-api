@@ -94,7 +94,7 @@ export const TransactionsAPI = {
         }
     },
 
-    async transactionsFromAddress (address, {order = "version", limit = 25, offset = 0}={}) {
+    async transactionsFromAddress (address, {order = "version", limit = 25, start = 0}={}) {
         const fields = `
         `
         const sql = `
@@ -104,15 +104,15 @@ export const TransactionsAPI = {
             from transactions t
             left join user_transactions ut on t.id = ut.id
             left join payloads p on t.id = p.id
-            where ut.sender = $1
+            where ut.sender = $1 and t.version >= $3
             
             union all
             
             select t.*,
-                   mt.proposer as sebder                   
+                   mt.proposer as sender                   
             from transactions t
             left join meta_transactions mt on t.id = mt.id
-            where mt.proposer = $1
+            where mt.proposer = $1 and t.version >= $3
             )
             select * from transactions
             order by '%ORDER%'
@@ -120,7 +120,7 @@ export const TransactionsAPI = {
         `.replace("'%ORDER%'", order)
 
         try {
-            const result = (await this.query(sql, [address, limit, offset])).rows
+            const result = (await this.query(sql, [address, limit, start])).rows
             return new Result(true, "OK", result)
         } catch (e) {
             return new Result(false, e.message, e.stack)
@@ -254,4 +254,34 @@ export const TransactionsAPI = {
             return new Result(false, e.message)
         }
     },
+
+    async proposalTransactions(address, {order, limit = 25, start = 0}) {
+        const sql = `
+            select             
+                t.type,
+                t.version,
+                t.hash,
+                t.success,
+                t.vm_status,
+                t.timestamp,
+                t.id,
+                t.changes,
+                t.events,
+                mt.round,
+                mt.epoch,
+                mt.proposer,
+                mt.previous_block_votes,
+                mt.failed_proposer_indices
+            from meta_transactions mt
+                left join transactions t on mt.tr_id = t.id
+            where proposer = $1 and version >= $3
+            limit $2
+        `
+        try {
+            const result = (await this.query(sql, [address, limit, start])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    }
 }

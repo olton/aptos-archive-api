@@ -39,6 +39,26 @@ export const ValidatorsAPI = {
         }
     },
 
+    async roundsPerEpochByAddress (address, epoch_count = 10) {
+        const sql = `
+            select
+                epoch,
+                count(round) as rounds
+            from meta_transactions
+            where proposer = $1
+            group by epoch
+            order by epoch desc
+            limit $2
+        `
+
+        try {
+            const result = (await this.query(sql, [address, epoch_count])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message, e.stack)
+        }
+    },
+
     async roundsInTime (trunc = 'minute', limit = 60) {
         const sql = `
             select

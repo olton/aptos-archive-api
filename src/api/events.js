@@ -8,9 +8,17 @@ export const EventAPI = {
                 e.key, 
                 e.sequence_number,
                 e.type,
-                e.data
+                e.data,
+                vt.version,
+                vt.success,
+                vt.vm_status,
+                vt.hash,
+                vt.timestamp,
+                vt.type as trans_type,
+                vs.sender
             from events e
                 left join v_transactions vt on e.id = vt.id
+                left join v_senders vs on e.id = vs.id
             where version >= $2
             order by '%ORDER%'
             limit $1
@@ -31,9 +39,17 @@ export const EventAPI = {
                 e.key, 
                 e.sequence_number,
                 e.type,
-                e.data
+                e.data,
+                vt.version,
+                vt.success,
+                vt.vm_status,
+                vt.hash,
+                vt.timestamp,
+                vt.type as trans_type,
+                vs.sender
             from events e
                 left join v_transactions vt on e.id = vt.id
+                left join v_senders vs on e.id = vs.id
             where version >= $3 and e.type = $1
             order by '%ORDER%'
             limit $2
@@ -54,9 +70,17 @@ export const EventAPI = {
                 e.key, 
                 e.sequence_number,
                 e.type,
-                e.data
+                e.data,
+                vt.version,
+                vt.success,
+                vt.vm_status,
+                vt.hash,
+                vt.timestamp,
+                vt.type as trans_type,
+                vs.sender
             from events e
                 left join v_transactions vt on e.id = vt.id
+                left join v_senders vs on e.id = vs.id
             where version >= $3 and e.type = $1
             order by '%ORDER%'
             limit $2
@@ -78,19 +102,28 @@ export const EventAPI = {
                 e.sequence_number,
                 e.type,
                 e.data,
-                coalesce(ut.sender, mt.proposer, 'unknown') as sender
+                vs.sender,
+                vt.version,
+                vt.success,
+                vt.vm_status,
+                vt.hash,
+                vt.timestamp,
+                vt.type as trans_type,
+                vs.sender
             from events e
                 left join v_transactions vt on e.id = vt.id
-                left join user_transactions ut on e.id = ut.id
-                left join meta_transactions mt on e.id = ut.id
-            where version >= $3 and coalesce(ut.sender, mt.proposer, 'unknown') = $1
+                left join v_senders vs on vs.id = e.id
+            where version >= $2 and vs.id = e.id
             order by '%ORDER%'
-            limit $2
+            limit $1
         `.replace("'%ORDER%'", order)
 
         try {
-            const result = (await this.query(sql, [address, limit, start])).rows
-            return new Result(true, "OK", result)
+            const result = (await this.query(sql, [limit, start])).rows
+            const filtered = result.filter(v => {
+                return v.sender === address
+            })
+            return new Result(true, "OK", filtered)
         } catch (e) {
             return new Result(false, e.message)
         }

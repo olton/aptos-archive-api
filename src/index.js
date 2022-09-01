@@ -10,6 +10,7 @@ import {CoinsAPI} from "./api/coins.js";
 import {ValidatorsAPI} from "./api/validators.js";
 import {GasAPI} from "./api/gas.js";
 import {OperationsAPI} from "./api/operations.js";
+import {EventAPI} from "./api/events.js";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -53,7 +54,8 @@ Object.assign(Archive.prototype,
     TransactionsAPI,
     ValidatorsAPI,
     GasAPI,
-    OperationsAPI
+    OperationsAPI,
+    EventAPI
 )
 
 export {

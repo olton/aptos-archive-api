@@ -89,3 +89,12 @@ const currentRound = await arch.currentRoun()
 const roundsPerEpoch = await arch.roundsPerEpoch(10)
 const roundsInTime = await arch.roundsInTime("minute", 60)
 ```
+
+### Events API
+- [x] events({order, limit, start})
+- [x] eventsByType(type, {order, limit, start})
+- [x] eventsByKey(key, {order, limit, start})
+- [x] eventsByAddress(address, {order, limit, start})
+```javascript
+
+```

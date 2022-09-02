@@ -9,7 +9,7 @@ export const ValidatorsAPI = {
                 round
             from meta_transactions bt
                      left join transactions t on bt.id = t.id
-            order by t.timestamp desc limit 1
+            order by bt.id desc limit 1
         `
 
         try {

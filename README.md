@@ -57,28 +57,44 @@ const mint = await arch.mint({order: "version desc", limit: 25, start: 0})
 - [x] collectionsCount()
 - [x] collections({order, limit, start})
 - [x] collectionsByName(name, {order, limit, start})
+- [x] collectionsInCollection(collection, {order, limit, start})
 - [x] collectionsByAddress(address, {order, limit, start})
 - [x] tokensCount()
 - [x] tokens({order, limit, start})
 - [x] tokensByName(name, {order, limit, start})
 - [x] tokensByAddress(address, {order, limit, start})
+- [x] collectionsCountForAddress(address)
+- [x] tokensCountForAddress(address)
 ```javascript
-
+const collectionsCount = await arch.collectionsCount()
+const collections = await arch.collections({order: "version", limit: 25, start: 0})
+const collectionsByName = await arch.collectionsByName("Alice's collection", {order: "version", limit: 25, start: 0})
+const collectionsByAddress = await arch.collectionsByAddress("0x1234567890...", {order: "version", limit: 25, start: 0})
+const tokenCount = await arch.tokensCount()
 ```
+
 ### Transactions API
 - [x] transactions({order, limit, start})
 - [x] userTransactions({order, limit, start})
 - [x] metaTransactions({order, limit, start})
 - [x] stateTransactions({order, limit, start})
 - [x] transactionsFromAddress(address, {order, limit, start})
-- [x] proposalTransactions(address, {order, limit, start})
+- [x] proposalTransactionsFromAddress(address, {order, limit, start})
+- [x] proposalTransaction({order, limit, start})
 - [x] genesis()
 - [x] transactionsCount()
 ```javascript
 const trans = await transactions({order:"version", limit:25, start:0})
 const genesis = await arch.genesis()
 const counts = await arch.transactionsCount()
+const userTransactions = await arch.userTransactions({order: "version", limit: 25, start: 0})
+const metaTransactions = await arch.metaTransactions({order: "version", limit: 25, start: 0})
+const stateTransactions = await arch.stateTransactions({order: "version", limit: 25, start: 0})
+const transactionsFromAddress = await arch.transactionsFromAddress("0x1234567890...", {order: "version", limit: 25, start: 0})
+const proposalTransactionsFromAddress = await arch.proposalTransactionsFromAddress("0x1234567890...", {order: "version", limit: 25, start: 0})
+const proposalTransactions = await arch.proposalTransactions({order: "version", limit: 25, start: 0})
 ```
+
 ### Validators API
 - [x] currentRound()
 - [x] roundsPerEpoch(epoch_count)
@@ -87,6 +103,7 @@ const counts = await arch.transactionsCount()
 ```javascript
 const currentRound = await arch.currentRoun()
 const roundsPerEpoch = await arch.roundsPerEpoch(10)
+const roundsPerEpochByAddress = await arch.roundsPerEpochByAddress("0x1234567890...", 10)
 const roundsInTime = await arch.roundsInTime("minute", 60)
 ```
 
@@ -96,5 +113,8 @@ const roundsInTime = await arch.roundsInTime("minute", 60)
 - [x] eventsByKey(key, {order, limit, start})
 - [x] eventsByAddress(address, {order, limit, start})
 ```javascript
-
+const events = arch.events({order: "version", limit: 25, start: 0})
+const eventsByType = arch.eventsByType("0x1::coin::DepositEvent", {order: "version", limit: 25, start: 0})
+const eventsByKey = arch.eventsByKey("0x1000000000...", {order: "version", limit: 25, start: 0})
+const eventsByAddress = arch.eventsByAddress("0x1234567890...", {order: "version", limit: 25, start: 0})
 ```

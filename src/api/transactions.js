@@ -255,7 +255,7 @@ export const TransactionsAPI = {
         }
     },
 
-    async proposalTransactions(address, {order, limit = 25, start = 0}) {
+    async proposalTransactionsFromAddress(address, {order, limit = 25, start = 0}) {
         const sql = `
             select             
                 t.type,
@@ -279,6 +279,36 @@ export const TransactionsAPI = {
         `
         try {
             const result = (await this.query(sql, [address, limit, start])).rows
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
+    async proposalTransactions({order, limit = 25, start = 0}) {
+        const sql = `
+            select             
+                t.type,
+                t.version,
+                t.hash,
+                t.success,
+                t.vm_status,
+                t.timestamp,
+                t.id,
+                t.changes,
+                t.events,
+                mt.round,
+                mt.epoch,
+                mt.proposer,
+                mt.previous_block_votes,
+                mt.failed_proposer_indices
+            from meta_transactions mt
+                left join transactions t on mt.tr_id = t.id
+            where version >= $2
+            limit $1
+        `
+        try {
+            const result = (await this.query(sql, [limit, start])).rows
             return new Result(true, "OK", result)
         } catch (e) {
             return new Result(false, e.message)

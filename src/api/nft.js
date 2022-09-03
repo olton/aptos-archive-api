@@ -37,6 +37,18 @@ export const NftAPI = {
         }
     },
 
+    async collectionsCountForAddress(address){
+        const sql = `
+        select count(*) from collections where address = $1
+    `
+        try {
+            const result = (await this.query(sql, [address])).rows[0]
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
     async collections({order = "version", limit = 25, start = 0} = {}){
         const sql = `
         select 
@@ -112,6 +124,18 @@ export const NftAPI = {
         }
     },
 
+    async tokensCountForAddress(address){
+        const sql = `
+        select count(*) from tokens where address = $1
+    `
+        try {
+            const result = (await this.query(sql, [address])).rows[0]
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message)
+        }
+    },
+
     async tokens({order = "version", limit = 25, start = 0} = {}){
         const sql = `
         select 
@@ -147,6 +171,27 @@ export const NftAPI = {
     `.replace("'%ORDER%'", order)
         try {
             let result = (await this.query(sql, [name, limit, start])).rows
+            result = decodeToken(result)
+            return new Result(true, "OK", result)
+        } catch (e) {
+            return new Result(false, e.message, e.stack)
+        }
+    },
+
+    async tokensInCollection(collection, {order = "version", limit = 25, start = 0} = {}){
+        const sql = `
+        select 
+            c.*, 
+            t.version, 
+            t.timestamp 
+        from tokens c
+            left join transactions t on t.id = c.fk_id
+        where version >= $3 and (c.collection = $1 or c.collection = '${encodeStr(collection)}')
+        order by '%ORDER%'
+        limit $2
+    `.replace("'%ORDER%'", order)
+        try {
+            let result = (await this.query(sql, [collection, limit, start])).rows
             result = decodeToken(result)
             return new Result(true, "OK", result)
         } catch (e) {
